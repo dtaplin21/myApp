@@ -1,6 +1,7 @@
 const { Configuration, OpenAIApi } = require('openai');
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs";
+require('dotenv').config();
 
 
 

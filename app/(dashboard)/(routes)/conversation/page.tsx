@@ -1,6 +1,6 @@
 "use client"
 
-import Axios from "axios";
+import axios from "axios";
 import * as z from "zod"
 import { MessageSquare } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -38,7 +38,7 @@ const [messages, setMessages] = useState<typeof ChatCompletionRequestMessage[]>(
             }
             const newMessages = [...messages, userMessage];
 
-            const response = await Axios.post("/api/conversation", {
+            const response = await axios.post("/api/conversation", {
                 messages: newMessages,
             });
 
@@ -105,6 +105,7 @@ const [messages, setMessages] = useState<typeof ChatCompletionRequestMessage[]>(
             </Form>
         </div>
         <div className="space-y-4">
+        
             <div className="flex flex-col-reverse gap-y-4">
                 {messages.map((message) => (
                     <div key={message.content}>
