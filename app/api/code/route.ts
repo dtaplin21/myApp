@@ -38,7 +38,7 @@ export async function POST(
 
         const response = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
-            messages
+            messages: [instructionMessage, ...messages]
         })
 
         return NextResponse.json(response.data.choices[0].message)
