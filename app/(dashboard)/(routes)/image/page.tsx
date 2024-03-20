@@ -17,7 +17,7 @@ import { Select,
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Heading } from "@/components/heading";
-import { formSchema, amountOptions } from "./constants";
+import { formSchema, amountOptions, resolutionOptions } from "./constants";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -89,7 +89,7 @@ const [images, setImages] = useState<string[]>([])
                 <FormField 
                     name= "prompt"
                     render={({ field }) => (
-                        <FormItem className="col-span-12 lg:col-span-10">
+                        <FormItem className="col-span-12 lg:col-span-6">
                             <FormControl className="m-0 p-0">
                             <Input 
                                 className="border-0 outline-none 
@@ -121,6 +121,36 @@ const [images, setImages] = useState<string[]>([])
                             </FormControl>
                             <SelectContent>
                                 {amountOptions.map((option) => (
+                                    <SelectItem 
+                                    key={option.value}
+                                    value={option.value}
+                                    >
+                                        {option.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </FormItem>
+                )}
+                />
+                <FormField 
+                control={form.control}
+                name="resolution"
+                render={({ field}) => (
+                    <FormItem className="col-span-12 lg:col-span-2">
+                        <Select
+                        disabled={isLoading}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        defaultValue={field.value}
+                        >
+                            <FormControl>
+                                <SelectTrigger>
+                                    <SelectValue defaultValue={field.value} />
+                                </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                                {resolutionOptions.map((option) => (
                                     <SelectItem 
                                     key={option.value}
                                     value={option.value}
