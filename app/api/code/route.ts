@@ -45,7 +45,7 @@ export async function POST(
 
 
     } catch (error) {
-        console.log("[CONVERSATION_ERROR]", error);
+        console.log("[CODE_ERROR]", error);
         return new NextResponse("Interanl Error", { status: 500});
     }
 }

@@ -2,12 +2,11 @@
 
 import axios from "axios";
 import * as z from "zod"
-import { Code } from "lucide-react";
+import { ImageIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 const { ChatCompletionRequestMessage } = require("openai");
 import { cn } from "@/lib/utils";
-import  ReactMarkdown  from "react-markdown";
 
 
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
@@ -22,7 +21,7 @@ import { Loader } from "@/components/loader";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
 
-const CodePage = () => {
+const ImagePage = () => {
 const router = useRouter();
 const [messages, setMessages] = useState<typeof ChatCompletionRequestMessage[]>([]);
 
@@ -44,7 +43,7 @@ const [messages, setMessages] = useState<typeof ChatCompletionRequestMessage[]>(
             }
             const newMessages = [...messages, userMessage];
 
-            const response = await axios.post("/api/code", {
+            const response = await axios.post("/api/conversation", {
                 messages: newMessages,
             });
 
@@ -63,11 +62,11 @@ const [messages, setMessages] = useState<typeof ChatCompletionRequestMessage[]>(
    return (
     <div>
        <Heading 
-       title="Code Generation"
-       description="Generate code using descriptive text."
-       icon={Code}
-       iconColor="text-green-700"
-       bgColor="bg-violet-500/10"
+       title="Image Generation"
+       description="Turn your prompt into image."
+       icon={ImageIcon}
+       iconColor="text-pink-700"
+       bgColor="bg-pink-500/10"
        />
        <div className="px-4 lg:px-8">
         <div>
@@ -97,7 +96,7 @@ const [messages, setMessages] = useState<typeof ChatCompletionRequestMessage[]>(
                                 focus-visible:ring-0
                                 focus-visible:ring-transparent w-full"
                                 disabled={isLoading}
-                                placeholder="Simple toggle buttons using react hooks."
+                                placeholder="How do I calculate the radius of a circle?"
                                 {...field}
                             />
                             </FormControl>
@@ -129,22 +128,9 @@ const [messages, setMessages] = useState<typeof ChatCompletionRequestMessage[]>(
                         )}
                     >
                         {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-                       <ReactMarkdown
-                        components={{
-                            pre: ({ node, ...props }) => (
-                                <div className="overflow-auto w-full my-2
-                                 bg-black/10 p-2 rounded-lg">
-                                    <pre {...props} />
-                                </div>
-                            ),
-                            code: ({ node, ...props }) => (
-                                <code className="bg-black/10 rounded-lg p1" {...props} />
-                            )
-                        }}
-                        className="text-sm overflow-hidden leading-7"
-                        >
-                        {message.content || ""}
-                       </ReactMarkdown>
+                        <p className="text-sm">
+                        {message.content}
+                        </p>
                     </div>
                 ))}
             </div>
@@ -154,4 +140,4 @@ const [messages, setMessages] = useState<typeof ChatCompletionRequestMessage[]>(
    )
 }
 
-export default CodePage;
+export default ImagePage;
