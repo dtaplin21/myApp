@@ -5,30 +5,36 @@ import * as z from "zod"
 import { ImageIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-const { ChatCompletionRequestMessage } = require("openai");
 import { cn } from "@/lib/utils";
+import { Select, 
+    SelectTrigger, 
+    SelectValue,
+     SelectContent,
+     SelectItem
+     } from "@/components/ui/select"
 
 
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Heading } from "@/components/heading";
-import { formSchema } from "./constants";
+import { formSchema, amountOptions } from "./constants";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
-import { UserAvatar } from "@/components/user-avatar";
-import { BotAvatar } from "@/components/bot-avatar";
+
 
 const ImagePage = () => {
 const router = useRouter();
-const [messages, setMessages] = useState<typeof ChatCompletionRequestMessage[]>([]);
+const [images, setImages] = useState<string[]>([])
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            prompt: ""
+            prompt: "",
+            amoount: "1",
+            resolution: "512x512",
         }
     });
 
@@ -37,19 +43,13 @@ const [messages, setMessages] = useState<typeof ChatCompletionRequestMessage[]>(
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            const userMessage: typeof ChatCompletionRequestMessage = {
-                role: "user",
-                content: values.prompt,
-            }
-            const newMessages = [...messages, userMessage];
+            setImages([]);
+        const response = await axios.post("/api/image", values);
 
-            const response = await axios.post("/api/conversation", {
-                messages: newMessages,
-            });
+        const urls = response.data.map((image: { url: string }) => image.url)
 
-            setMessages((current) => [...current, userMessage, response.data]);
-
-            form.reset();
+        setImages(urls);
+         form.reset();
 
         } catch (error: any) {
             //TODO: open Pro Model
@@ -96,12 +96,42 @@ const [messages, setMessages] = useState<typeof ChatCompletionRequestMessage[]>(
                                 focus-visible:ring-0
                                 focus-visible:ring-transparent w-full"
                                 disabled={isLoading}
-                                placeholder="How do I calculate the radius of a circle?"
+                                placeholder=" a picture of a moose in Montana"
                                 {...field}
                             />
                             </FormControl>
                         </FormItem>
                     )}
+                />
+                <FormField 
+                control={form.control}
+                name="amoount"
+                render={({ field}) => (
+                    <FormItem className="col-span-12 lg:col-span-2">
+                        <Select
+                        disabled={isLoading}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        defaultValue={field.value}
+                        >
+                            <FormControl>
+                                <SelectTrigger>
+                                    <SelectValue defaultValue={field.value} />
+                                </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                                {amountOptions.map((option) => (
+                                    <SelectItem 
+                                    key={option.value}
+                                    value={option.value}
+                                    >
+                                        {option.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </FormItem>
+                )}
                 />
                 <Button className="col-span-12 lg:col-span-2 w-full" disabled={isLoading}>
                     Generate
@@ -111,28 +141,15 @@ const [messages, setMessages] = useState<typeof ChatCompletionRequestMessage[]>(
         </div>
         <div className="space-y-4">
             {isLoading && (
-                <div className="p-8 rounded-lg w-full flex 
-                items-center justify-content bg-muted">
+                <div className="p-20">
                     <Loader />
                 </div>
             )}
-            {messages.length === 0 && !isLoading && (
-                <Empty label="no convesation started." /> 
+            {images.length === 0 && !isLoading && (
+                <Empty label="No images generated yet." /> 
             )} 
-            <div className="flex flex-col-reverse gap-y-4">
-                {messages.map((message) => (
-                    <div 
-                    key={message.content}
-                        className={cn("p-8 w-full flex items-start fap-x-8 rounded-lg", 
-                        message.role === "user" ? "bg-whiete border border-black/10" : "bg-muted"
-                        )}
-                    >
-                        {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-                        <p className="text-sm">
-                        {message.content}
-                        </p>
-                    </div>
-                ))}
+            <div>
+                Images will be rendered here
             </div>
         </div>
        </div>
