@@ -179,7 +179,8 @@ const [images, setImages] = useState<string[]>([])
             {images.length === 0 && !isLoading && (
                 <Empty label="No images generated yet." /> 
             )} 
-            <div>
+            <div className="grid frid-cols-1 md:frid-cols-2 
+            lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-8">
                 Images will be rendered here
             </div>
         </div>
